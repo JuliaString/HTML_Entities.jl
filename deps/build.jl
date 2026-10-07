@@ -6,7 +6,7 @@ println("Running HTML entity build in ", pwd())
 
 using StrTables
 
-VER = UInt32(1)
+const VER = UInt32(1)
 
 const inpname = "htmlnames.jl"
 

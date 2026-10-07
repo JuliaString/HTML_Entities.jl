@@ -1,4 +1,3 @@
-__precompile__()
 """
 # Public API (nothing is exported)
 
@@ -8,17 +7,17 @@ __precompile__()
 * completions(str)
 """
 module HTML_Entities
-using StrTables, RelocatableFolders
+using StrTables
 
-VER = UInt32(1)
+const VER = UInt32(1)
 
-struct HTML_Table{T} <: AbstractEntityTable
+struct HTML_Table{T,O} <: AbstractEntityTable
     ver::UInt32
     tim::String
     inf::String
     base32::UInt32
     base2c::UInt32
-    nam::StrTable{T}
+    nam::PackedTable{T,UInt8,O}
     ind::Vector{UInt16}
     val16::Vector{UInt16}
     ind16::Vector{UInt16}
@@ -28,10 +27,11 @@ struct HTML_Table{T} <: AbstractEntityTable
     ind2c::Vector{UInt16}
 end
 
-const DATA_PATH = @path joinpath(@__DIR__, "../data", "html.dat")
+const DATA_PATH = joinpath(@__DIR__, "..", "data", "html.dat")
+include_dependency(DATA_PATH)
 
-function __init__()
-    global default = HTML_Table(StrTables.load(DATA_PATH)...)
-    nothing
-end
+# The table is loaded at precompile time and stored in the package image,
+# so no file I/O is needed at runtime (and it works with `juliac --trim`)
+const default = HTML_Table(StrTables.load(DATA_PATH)...)
+
 end # module HTML_Entities
