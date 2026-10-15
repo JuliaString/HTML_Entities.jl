@@ -1,6 +1,5 @@
 using StrTables, HTML_Entities
-
-@static VERSION < v"0.7.0-DEV" ? (using Base.Test) : (using Test)
+using Test
 
 # Test the functions lookupname, matches, longestmatches, completions
 # Check that characters from all 3 tables (BMP, non-BMP, string) are tested
@@ -8,6 +7,13 @@ using StrTables, HTML_Entities
 const def = HTML_Entities.default
 
 @testset "HTML_Entities" begin
+@testset "default table" begin
+    # Needed for type-stable access and for `juliac --trim`
+    @test isconst(HTML_Entities, :default)
+    @test isconcretetype(typeof(def))
+    @test length(def) > 2000
+end
+
 @testset "lookupname" begin
     @test lookupname(def, SubString("My name is Spock", 12)) == ""
     @test lookupname(def, "foobar") == ""
